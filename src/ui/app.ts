@@ -1,5 +1,6 @@
 import { mountAlgorithmPicker } from "./algorithmPicker";
 import { mountControls } from "./controls";
+import { mountRaceControls } from "./raceControls";
 import { mountStatsDisplay } from "./statsDisplay";
 import { ALGORITHMS } from "./types";
 import {
@@ -21,10 +22,12 @@ export interface AppElements {
 const POLL_INTERVAL_MS = 100;
 
 /**
- * Wires together the algorithm picker (#12), randomize/reset button (#13),
- * live stats display (#14), and renderer's race API (#11) into the full app
- * (#15). Renderer owns everything inside `raceContainer` once a race starts;
- * ui only ever calls `startRace`/`destroy` on it and reads stats back out.
+ * Wires together the algorithm picker (#12), randomize/reset + array-size +
+ * speed controls (#13), pause/step controls (#4), live stats display (#14),
+ * and renderer's race API (#11) into the full app (#15). Renderer owns
+ * everything inside `raceContainer` once a race starts; ui only ever calls
+ * `startRace`/`destroy`/`pause`/`resume`/`stepOnce`/`setSpeed` on the handle
+ * and reads stats back out.
  */
 export function mountApp(elements: AppElements): void {
   const { pickerContainer, controlsContainer, raceContainer, statsContainer } =
@@ -48,6 +51,8 @@ export function mountApp(elements: AppElements): void {
     handle?.destroy();
     stopPolling();
     handle = null;
+    raceControls.setDisabled(true);
+    raceControls.setPaused(false);
 
     statsDisplay.setAlgorithms(selected);
 
@@ -55,8 +60,9 @@ export function mountApp(elements: AppElements): void {
       return;
     }
 
-    const array = generateRandomArray();
-    handle = startRace(raceContainer, selected, array);
+    const array = generateRandomArray(controls.getArraySize());
+    handle = startRace(raceContainer, selected, array, controls.getSpeed());
+    raceControls.setDisabled(false);
 
     pollTimer = setInterval(() => {
       if (!handle) {
@@ -66,6 +72,7 @@ export function mountApp(elements: AppElements): void {
       statsDisplay.update(handle.getAllStats());
       if (handle.isRaceComplete()) {
         stopPolling();
+        raceControls.setDisabled(true);
       }
     }, POLL_INTERVAL_MS);
   }
@@ -78,7 +85,42 @@ export function mountApp(elements: AppElements): void {
     statsDisplay.setAlgorithms(selected);
   });
 
-  mountControls(controlsContainer, () => {
-    startRaceFor(picker.getSelected());
-  });
+  const controls = mountControls(
+    controlsContainer,
+    () => {
+      startRaceFor(picker.getSelected());
+    },
+    (speedMs) => {
+      // Live speed slider drag: re-pace the active race immediately without
+      // waiting for the next randomize/restart.
+      handle?.setSpeed(speedMs);
+    },
+  );
+
+  const raceControls = mountRaceControls(
+    controlsContainer,
+    () => {
+      // Pause/Resume toggle: reflect actual handle state back into the
+      // button label rather than tracking our own boolean, so it can't
+      // drift out of sync with the renderer.
+      if (!handle) return;
+      if (handle.isPaused()) {
+        handle.resume();
+      } else {
+        handle.pause();
+      }
+      raceControls.setPaused(handle.isPaused());
+    },
+    () => {
+      if (!handle) return;
+      handle.stepOnce();
+      // Reflect the manual step immediately rather than waiting for the
+      // next poll tick, so single-stepping feels responsive.
+      statsDisplay.update(handle.getAllStats());
+      if (handle.isRaceComplete()) {
+        stopPolling();
+        raceControls.setDisabled(true);
+      }
+    },
+  );
 }

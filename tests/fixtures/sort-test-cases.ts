@@ -1,16 +1,18 @@
 /**
- * Draft algorithm test case data (task #16).
+ * Draft algorithm test case data (task #16, extended for v2).
  *
  * These are input/expected-sorted-output pairs for verifying the *correctness*
- * of the final sorted result produced by each of the 4 algorithms (Bubble,
- * Insertion, Merge, Quick). They intentionally say nothing about how the
- * step-by-step animation interface works (that's negotiated between
- * back-end and renderer) — correctness of the final output is algorithm-
- * agnostic, so the same case list is reused for all 4 algorithms.
+ * of the final sorted result produced by each algorithm. They intentionally
+ * say nothing about how the step-by-step animation interface works (that's
+ * negotiated between back-end and renderer) — correctness of the final
+ * output is algorithm-agnostic, so the same shared case list is reused
+ * across all algorithms, with extra edge cases layered on for algorithms
+ * whose cost profile depends on more than just array length (see
+ * `countingRadixExtraCases` below).
  *
- * Consumed later by task #18, which wires these into runnable Vitest tests
- * against back-end's finished algorithm implementations (blocked on back-end's
- * task #6). Not runnable yet on its own — no test runner is wired up.
+ * v1 covered Bubble, Insertion, Merge, Quick. v2 adds Selection, Heap,
+ * Shell, Counting, Radix — wired into runnable Vitest tests against
+ * back-end's implementations in `tests/algorithms.test.ts`.
  */
 
 export interface SortTestCase {
@@ -79,21 +81,79 @@ export const sharedTestCases: SortTestCase[] = [
   },
 ];
 
-export const ALGORITHMS = ["bubble", "insertion", "merge", "quick"] as const;
+/**
+ * Extra edge cases for counting sort and radix sort. Both are
+ * non-comparison sorts whose cost scales with the *value range*
+ * (max - min) rather than purely with array length — counting sort
+ * allocates a count array sized to the range, and radix sort's number of
+ * digit passes is driven by the largest (offset) value. Cases here are
+ * chosen to exercise that dimension specifically, on top of the shared
+ * cases every algorithm already gets:
+ *
+ * - "wide value range, small array": array length stays small but the
+ *   value range is large and sparse (few distinct values re-occurring
+ *   nowhere near each other) — the case v1's shared list doesn't cover,
+ *   since none of those arrays have a range much larger than their length.
+ * - "very sparse wide range": an extreme version (3 elements spanning a
+ *   range of 5000) — cheap for a comparison sort, but sizes counting
+ *   sort's internal count array to 5001 entries; keeps the value small
+ *   enough to stay fast in a unit test while still being clearly
+ *   disproportionate to array length.
+ * - "multi-digit values requiring several radix passes": values spanning
+ *   1 to 5 decimal digits, so radix sort's LSD loop must run through
+ *   several digit passes (ones, tens, hundreds, thousands, ten-thousands)
+ *   rather than bottoming out after one or two.
+ */
+export const countingRadixExtraCases: SortTestCase[] = [
+  {
+    name: "wide value range, small array",
+    input: [500, 1, 250, 1000, 0],
+    expected: [0, 1, 250, 500, 1000],
+  },
+  {
+    name: "very sparse wide range",
+    input: [0, 5000, 1],
+    expected: [0, 1, 5000],
+  },
+  {
+    name: "multi-digit values requiring several radix passes",
+    input: [12345, 6, 789, 42, 10001, 999, 5],
+    expected: [5, 6, 42, 789, 999, 10001, 12345],
+  },
+];
+
+export const ALGORITHMS = [
+  "bubble",
+  "insertion",
+  "merge",
+  "quick",
+  "selection",
+  "heap",
+  "shell",
+  "counting",
+  "radix",
+] as const;
 export type AlgorithmName = (typeof ALGORITHMS)[number];
 
 /**
  * Per-algorithm view of the case list. Kept as a map (rather than one flat
- * array) so task #18 can loop `describe.each` over algorithms, and so an
+ * array) so tests can loop `describe.each` over algorithms, and so an
  * algorithm-specific case (e.g. a quicksort worst-case pivot pattern) can be
  * appended to a single algorithm later without restructuring every case.
  *
- * All 4 currently point at the same shared list — correctness of the final
- * output doesn't depend on which algorithm produced it.
+ * Most algorithms point at the same shared list — correctness of the final
+ * output doesn't depend on which algorithm produced it. Counting and radix
+ * additionally get `countingRadixExtraCases` layered on, since their cost
+ * profile (value range, not just length) warrants dedicated coverage.
  */
 export const testCasesByAlgorithm: Record<AlgorithmName, SortTestCase[]> = {
   bubble: sharedTestCases,
   insertion: sharedTestCases,
   merge: sharedTestCases,
   quick: sharedTestCases,
+  selection: sharedTestCases,
+  heap: sharedTestCases,
+  shell: sharedTestCases,
+  counting: [...sharedTestCases, ...countingRadixExtraCases],
+  radix: [...sharedTestCases, ...countingRadixExtraCases],
 };

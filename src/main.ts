@@ -1,3 +1,5 @@
+import "../design/colors_and_type.css";
+import "./ui/styles.css";
 import { mountApp } from "./ui/app";
 
 const pickerContainer = document.querySelector<HTMLElement>("#algorithm-picker");

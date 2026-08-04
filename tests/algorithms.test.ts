@@ -4,6 +4,11 @@ import {
   insertionSort,
   mergeSort,
   quickSort,
+  selectionSort,
+  heapSort,
+  shellSort,
+  countingSort,
+  radixSort,
   runToCompletion,
   type SortAlgorithm,
 } from "../src/algorithms";
@@ -15,7 +20,10 @@ import {
 
 /**
  * Task #18: wires the task #16 test data into runnable Vitest tests against
- * back-end's finished algorithm implementations.
+ * back-end's finished algorithm implementations. Extended for v2 to cover
+ * the 5 new algorithms (Selection, Heap, Shell, Counting, Radix) alongside
+ * the original 4 (Bubble, Insertion, Merge, Quick) — same contract checks
+ * apply to all 9.
  */
 
 const implementations: Record<AlgorithmName, SortAlgorithm> = {
@@ -23,6 +31,11 @@ const implementations: Record<AlgorithmName, SortAlgorithm> = {
   insertion: insertionSort,
   merge: mergeSort,
   quick: quickSort,
+  selection: selectionSort,
+  heap: heapSort,
+  shell: shellSort,
+  counting: countingSort,
+  radix: radixSort,
 };
 
 describe.each(ALGORITHMS)("%s sort — correctness", (algorithmName) => {

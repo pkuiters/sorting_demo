@@ -18,6 +18,10 @@ export class RacePanel {
   private highlight: Highlight | null = null;
   private stats: AlgorithmStats;
   private readonly startTime: number;
+  /** Total wall-clock time this panel's race has spent paused so far, so
+   *  elapsedMs excludes it (pausing shouldn't count against an algorithm's
+   *  clock). Accumulated by RaceController on each resume(). */
+  private pausedMs = 0;
 
   constructor(name: AlgorithmName, canvas: HTMLCanvasElement, algorithm: SortAlgorithm, initialArray: number[], startTime: number) {
     this.name = name;
@@ -82,9 +86,15 @@ export class RacePanel {
   /** Repaints the panel's canvas from current mirror/highlight/stats state. */
   render(now: number): void {
     if (!this.stats.done) {
-      this.stats.elapsedMs = now - this.startTime;
+      this.stats.elapsedMs = now - this.startTime - this.pausedMs;
     }
     this.renderer.draw(this.mirror, this.stats.done ? null : this.highlight, this.stats.done);
+  }
+
+  /** Called by RaceController on resume() with the duration of the pause that
+   *  just ended, so this panel's elapsedMs stat excludes paused time. */
+  addPausedTime(ms: number): void {
+    this.pausedMs += ms;
   }
 
   getStats(): AlgorithmStats {

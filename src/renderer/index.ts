@@ -27,10 +27,19 @@ export { ALGORITHM_LABELS } from "./raceController";
  * the same `array`. Returns a handle for reading live stats and for tearing
  * the race down.
  *
+ * `speedMs` sets the initial step-pacing interval (ms between auto-advanced
+ * steps per panel; smaller = faster). Defaults to 20ms, matching v1 behavior.
+ * Change it live later via `handle.setSpeed()`.
+ *
  * Call `handle.destroy()` before starting a new race on the same container
  * (e.g. on randomize/reset) — otherwise the previous race's animation loop
  * keeps running underneath the new one.
  */
-export function startRace(container: HTMLElement, selectedAlgorithms: AlgorithmName[], array: number[]): RaceHandle {
-  return new RaceController(container, selectedAlgorithms, array);
+export function startRace(
+  container: HTMLElement,
+  selectedAlgorithms: AlgorithmName[],
+  array: number[],
+  speedMs?: number,
+): RaceHandle {
+  return new RaceController(container, selectedAlgorithms, array, speedMs);
 }

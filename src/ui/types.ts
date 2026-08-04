@@ -18,6 +18,11 @@ export const ALGORITHMS: readonly AlgorithmName[] = [
   "insertion",
   "merge",
   "quick",
+  "selection",
+  "heap",
+  "shell",
+  "counting",
+  "radix",
 ];
 
 export function zeroStats(): AlgorithmStats {

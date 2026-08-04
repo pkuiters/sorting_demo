@@ -1,0 +1,195 @@
+/**
+ * ui-owned component styles, built on top of design/colors_and_type.css
+ * tokens (imported alongside this file from src/main.ts). Renderer's
+ * panels/bars/canvas styling lives in its own module — this file only
+ * covers the picker, controls, and stats table that ui owns.
+ */
+
+#app {
+  max-width: var(--max-page);
+  margin: 0 auto;
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+#controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--space-5);
+  padding-bottom: var(--space-4);
+  border-bottom: var(--bw-1) solid var(--border-1);
+}
+
+/* -- Algorithm picker ----------------------------------------------------- */
+
+.algorithm-picker {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1) var(--space-4);
+  background: var(--surface);
+  border: var(--bw-1) solid var(--border-1);
+  border-radius: var(--r-lg);
+  padding: var(--space-3) var(--space-4);
+  margin: 0;
+}
+
+.algorithm-picker legend {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: var(--fw-medium);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+  color: var(--fg-3);
+  padding: 0 var(--space-1);
+}
+
+.algorithm-picker__option {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--fs-sm);
+  color: var(--fg-2);
+  cursor: pointer;
+}
+
+.algorithm-picker__option input[type="checkbox"] {
+  accent-color: var(--accent);
+  width: var(--space-4);
+  height: var(--space-4);
+  cursor: pointer;
+}
+
+.algorithm-picker__option:has(input:disabled) {
+  color: var(--fg-4);
+  cursor: not-allowed;
+}
+
+/* -- Randomize / array-size / speed controls ------------------------------ */
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.controls__size-label,
+.controls__speed-label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--fs-sm);
+  color: var(--fg-2);
+}
+
+.controls__size-input {
+  width: 4.5em;
+}
+
+.controls__size-input,
+input[type="number"] {
+  font-family: var(--font-sans);
+  font-size: var(--fs-sm);
+  color: var(--fg-1);
+  background: var(--surface);
+  border: var(--bw-1) solid var(--border-2);
+  border-radius: var(--r-sm);
+  padding: var(--space-1) var(--space-2);
+}
+
+.controls__speed-input {
+  accent-color: var(--accent);
+  width: 10em;
+}
+
+.controls button,
+.race-controls button {
+  font-family: var(--font-sans);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  border-radius: var(--r-sm);
+  padding: var(--space-2) var(--space-4);
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+
+.controls button:active,
+.race-controls button:active {
+  transform: translateY(0.5px) scale(0.99);
+}
+
+.controls button:disabled,
+.race-controls button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.controls__randomize {
+  background: var(--accent);
+  color: var(--fg-on-accent);
+  border: none;
+}
+.controls__randomize:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+.controls__randomize:active:not(:disabled) {
+  background: var(--accent-pressed);
+}
+
+/* -- Pause / step-through -------------------------------------------------- */
+
+.race-controls {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.race-controls button {
+  background: var(--surface-2);
+  color: var(--fg-1);
+  border: var(--bw-1) solid var(--border-1);
+}
+.race-controls button:hover:not(:disabled) {
+  background: var(--surface-3);
+}
+
+/* -- Stats table ------------------------------------------------------------ */
+
+.stats-display {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: var(--fs-sm);
+}
+
+.stats-display th,
+.stats-display td {
+  text-align: left;
+  padding: var(--space-2) var(--space-3);
+  border-bottom: var(--bw-1) solid var(--border-1);
+}
+
+.stats-display thead th {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: var(--fw-medium);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+  color: var(--fg-3);
+  background: var(--surface-2);
+  border-bottom: var(--bw-1) solid var(--border-2);
+}
+
+.stats-display tbody th {
+  color: var(--fg-1);
+  font-weight: var(--fw-semibold);
+}
+
+.stats-display td {
+  color: var(--fg-2);
+  font-variant-numeric: tabular-nums;
+}

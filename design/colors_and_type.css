@@ -1,0 +1,333 @@
+/* ============================================================================
+   Peter — Personal Design System
+   Tokens: colors, type, spacing, radii, shadows, motion.
+   Colorblind-safe palette derived from the Wong (2011) palette, tuned for UI.
+   ============================================================================ */
+
+@import url("https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300..800&family=JetBrains+Mono:wght@400;500;600&display=swap");
+
+:root {
+  /* -- Font families ------------------------------------------------------- */
+  --font-display: "Hanken Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-sans:    "Hanken Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-mono:    "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* -- Type scale (modular, 1.2 ratio) ------------------------------------ */
+  --fs-xs:   12px;
+  --fs-sm:   13px;
+  --fs-base: 15px;
+  --fs-md:   17px;
+  --fs-lg:   20px;
+  --fs-xl:   24px;
+  --fs-2xl:  32px;
+  --fs-3xl:  44px;
+  --fs-4xl:  60px;
+  --fs-5xl:  84px;
+
+  --lh-tight:  1.05;
+  --lh-snug:   1.2;
+  --lh-normal: 1.45;
+  --lh-loose:  1.65;
+
+  --tracking-tight:  -0.02em;
+  --tracking-snug:   -0.01em;
+  --tracking-normal: 0;
+  --tracking-wide:   0.02em;
+  --tracking-caps:   0.08em;
+
+  --fw-light:    300;
+  --fw-regular:  400;
+  --fw-medium:   500;
+  --fw-semibold: 600;
+  --fw-bold:     700;
+
+  /* -- Color: Wong colorblind-safe core ----------------------------------- */
+  /* Hue        | Light hex | Notes                                       */
+  --wong-blue:    #0072B2;  /* primary action                              */
+  --wong-orange:  #E69F00;  /* warning / accent                            */
+  --wong-green:   #009E73;  /* success / positive                          */
+  --wong-vermil:  #D55E00;  /* danger / error                              */
+  --wong-sky:     #56B4E9;  /* info / informational                        */
+  --wong-yellow:  #F0E442;  /* highlight (use sparingly)                   */
+  --wong-purple:  #CC79A7;  /* magenta / categorical                       */
+  --wong-black:   #0F1115;
+
+  /* -- Foreground / background (light mode default) ---------------------- */
+  --bg:       #FAFAF7;   /* warm off-white app background                   */
+  --surface:  #FFFFFF;   /* cards, sheets                                   */
+  --surface-2:#F4F4F0;   /* recessed wells, code blocks                     */
+  --surface-3:#ECECE6;   /* hover well                                      */
+
+  --fg-1: #0F1115;       /* primary text                                    */
+  --fg-2: #3A4150;       /* secondary text                                  */
+  --fg-3: #6B7280;       /* tertiary text, labels                           */
+  --fg-4: #A0A6B0;       /* disabled, hints                                 */
+  --fg-on-accent: #FFFFFF;
+
+  --border-1: #E6E5DE;   /* default 1px rule                                */
+  --border-2: #D6D5CC;   /* heavier divider                                 */
+  --border-strong: #0F1115;
+
+  /* -- Semantic ---------------------------------------------------------- */
+  --accent:        var(--wong-blue);
+  --accent-hover:  #005E94;
+  --accent-pressed:#004B77;
+  --accent-soft:   #E3F0F8;   /* tinted background for accent regions      */
+  --accent-fg:     #00466F;
+
+  --success:       var(--wong-green);
+  --success-soft:  #DFF4EC;
+  --success-fg:    #00604A;
+
+  --warning:       var(--wong-orange);
+  --warning-soft:  #FBEED1;
+  --warning-fg:    #8A5F00;
+
+  --danger:        var(--wong-vermil);
+  --danger-soft:   #FADFCE;
+  --danger-fg:     #8E3F00;
+
+  --info:          var(--wong-sky);
+  --info-soft:     #E0F0FA;
+  --info-fg:       #1A6B97;
+
+  /* -- Spacing (4px base) ------------------------------------------------ */
+  --space-0:  0px;
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  24px;
+  --space-6:  32px;
+  --space-7:  48px;
+  --space-8:  64px;
+  --space-9:  96px;
+  --space-10: 128px;
+
+  /* -- Radii ------------------------------------------------------------- */
+  --r-xs:  4px;
+  --r-sm:  6px;
+  --r-md:  10px;
+  --r-lg:  14px;
+  --r-xl:  20px;
+  --r-2xl: 28px;
+  --r-pill: 999px;
+
+  /* -- Borders ----------------------------------------------------------- */
+  --bw-1: 1px;
+  --bw-2: 2px;
+
+  /* -- Shadows (restrained, layered) ------------------------------------ */
+  --shadow-xs: 0 1px 0 rgba(15,17,21,0.04);
+  --shadow-sm: 0 1px 2px rgba(15,17,21,0.06), 0 1px 1px rgba(15,17,21,0.04);
+  --shadow-md: 0 4px 8px -2px rgba(15,17,21,0.08), 0 2px 4px -2px rgba(15,17,21,0.04);
+  --shadow-lg: 0 12px 24px -6px rgba(15,17,21,0.12), 0 4px 8px -4px rgba(15,17,21,0.06);
+  --shadow-xl: 0 24px 48px -12px rgba(15,17,21,0.18), 0 8px 16px -8px rgba(15,17,21,0.08);
+
+  /* Focus ring (always 2px, accent color, 2px offset) */
+  --ring: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent);
+
+  /* -- Motion ------------------------------------------------------------ */
+  --ease-out:  cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-in:   cubic-bezier(0.42, 0, 0.58, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --dur-fast:  120ms;
+  --dur-base:  180ms;
+  --dur-slow:  280ms;
+
+  /* -- Layout ------------------------------------------------------------ */
+  --max-prose: 65ch;
+  --max-page:  1200px;
+}
+
+/* ============================================================================
+   Dark mode — same Wong hues, tuned for contrast on dark backgrounds.
+   ============================================================================ */
+:root[data-theme="dark"], .theme-dark {
+  --bg:        #0B0D11;
+  --surface:   #14171D;
+  --surface-2: #1B1F27;
+  --surface-3: #232830;
+
+  --fg-1: #F5F6F8;
+  --fg-2: #B8BFCC;
+  --fg-3: #828A99;
+  --fg-4: #5B6271;
+
+  --border-1: #232830;
+  --border-2: #2F3540;
+  --border-strong: #F5F6F8;
+
+  --accent:        #4FA8E0;
+  --accent-hover:  #71BCEC;
+  --accent-pressed:#94CEF3;
+  --accent-soft:   rgba(79,168,224,0.14);
+  --accent-fg:     #B7DDF4;
+
+  --success:      #2BC197;
+  --success-soft: rgba(43,193,151,0.14);
+  --success-fg:   #7FE5C5;
+
+  --warning:      #F0B441;
+  --warning-soft: rgba(240,180,65,0.14);
+  --warning-fg:   #F7D38A;
+
+  --danger:       #F47A3D;
+  --danger-soft:  rgba(244,122,61,0.14);
+  --danger-fg:    #F9B289;
+
+  --info:         #74C6F0;
+  --info-soft:    rgba(116,198,240,0.14);
+  --info-fg:      #B9E0F4;
+
+  --shadow-xs: 0 1px 0 rgba(0,0,0,0.40);
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.45), 0 1px 1px rgba(0,0,0,0.35);
+  --shadow-md: 0 4px 8px -2px rgba(0,0,0,0.50), 0 2px 4px -2px rgba(0,0,0,0.30);
+  --shadow-lg: 0 12px 24px -6px rgba(0,0,0,0.55), 0 4px 8px -4px rgba(0,0,0,0.30);
+  --shadow-xl: 0 24px 48px -12px rgba(0,0,0,0.65), 0 8px 16px -8px rgba(0,0,0,0.40);
+
+  --ring: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent);
+}
+
+/* ============================================================================
+   Element defaults — semantic styles, not utilities.
+   ============================================================================ */
+html, body {
+  background: var(--bg);
+  color: var(--fg-1);
+  font-family: var(--font-sans);
+  font-size: var(--fs-base);
+  line-height: var(--lh-normal);
+  letter-spacing: var(--tracking-snug);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, .h1 {
+  font-family: var(--font-display);
+  font-size: var(--fs-4xl);
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-tight);
+  letter-spacing: -0.025em;
+  margin: 0;
+  text-wrap: balance;
+}
+h2, .h2 {
+  font-family: var(--font-display);
+  font-size: var(--fs-3xl);
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-tight);
+  letter-spacing: -0.02em;
+  margin: 0;
+  text-wrap: balance;
+}
+h3, .h3 {
+  font-family: var(--font-display);
+  font-size: var(--fs-2xl);
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-snug);
+  letter-spacing: -0.015em;
+  margin: 0;
+  text-wrap: balance;
+}
+h4, .h4 {
+  font-family: var(--font-display);
+  font-size: var(--fs-xl);
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-snug);
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+h5, .h5 {
+  font-family: var(--font-sans);
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-snug);
+  margin: 0;
+}
+
+p {
+  font-size: var(--fs-base);
+  line-height: var(--lh-loose);
+  color: var(--fg-2);
+  text-wrap: pretty;
+  margin: 0;
+}
+p.lede {
+  font-size: var(--fs-lg);
+  line-height: var(--lh-normal);
+  color: var(--fg-1);
+  letter-spacing: -0.012em;
+}
+
+small, .caption {
+  font-size: var(--fs-xs);
+  color: var(--fg-3);
+  letter-spacing: var(--tracking-normal);
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: var(--fw-medium);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+  color: var(--fg-3);
+}
+
+code, kbd, samp, pre, .mono {
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+  font-feature-settings: "ss01" on, "cv11" on;
+}
+code {
+  background: var(--surface-2);
+  border: 1px solid var(--border-1);
+  border-radius: var(--r-xs);
+  padding: 1px 6px;
+  color: var(--fg-1);
+}
+pre {
+  background: var(--surface-2);
+  border: 1px solid var(--border-1);
+  border-radius: var(--r-md);
+  padding: var(--space-4);
+  overflow-x: auto;
+  line-height: var(--lh-normal);
+}
+kbd {
+  background: var(--surface);
+  border: 1px solid var(--border-2);
+  border-bottom-width: 2px;
+  border-radius: var(--r-xs);
+  padding: 1px 6px;
+  font-size: 11px;
+  color: var(--fg-2);
+}
+
+a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  text-decoration-color: color-mix(in oklab, var(--accent) 40%, transparent);
+  transition: text-decoration-color var(--dur-fast) var(--ease-out);
+}
+a:hover { text-decoration-color: var(--accent); }
+
+hr {
+  border: 0;
+  border-top: 1px solid var(--border-1);
+  margin: var(--space-5) 0;
+}
+
+::selection {
+  background: color-mix(in oklab, var(--wong-yellow) 60%, transparent);
+  color: var(--fg-1);
+}
+
+:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
+  border-radius: var(--r-sm);
+}

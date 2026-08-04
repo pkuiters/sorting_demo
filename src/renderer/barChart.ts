@@ -23,6 +23,11 @@ export interface BarChartPalette {
   done: string;
 }
 
+/** Hardcoded fallback values, used per-role if the corresponding design-system
+ *  token isn't resolvable yet (e.g. design/colors_and_type.css hasn't been
+ *  <link>ed into index.html, or a var is missing) — keeps the chart rendering
+ *  sensibly rather than with blank/invalid canvas colors. These are the same
+ *  values v1 used directly before the design-system import. */
 export const DEFAULT_PALETTE: BarChartPalette = {
   background: "#161821",
   bar: "#5b8cff",
@@ -31,6 +36,53 @@ export const DEFAULT_PALETTE: BarChartPalette = {
   overwrite: "#a855f7",
   done: "#22c55e",
 };
+
+/** Maps each palette role to its design-system CSS custom property, per
+ *  design/colors_and_type.css (Wong colorblind-safe palette; confirmed live
+ *  by ui via src/main.ts's import). `bar` (the unhighlighted/default state)
+ *  uses `--accent`, the design system's primary-action blue — bars are the
+ *  chart's main content, not a "surface," so this reads as intentional
+ *  rather than as color used where a neutral was expected. The three
+ *  highlight roles map onto the design system's semantic state colors so
+ *  every non-default bar color has a stable, documented meaning:
+ *  compare = warning (orange), swap = danger (vermillion),
+ *  overwrite = info (sky blue — merge sort's buffer writeback reads
+ *  naturally as "informational," and it keeps all four highlight kinds
+ *  drawn from the same semantic-state family rather than reaching for a raw
+ *  hue). `--wong-purple` was considered for `overwrite` but rejected: the
+ *  design system's own README marks purple "categorical, never semantic,"
+ *  and overwrite *is* a semantic state, so `--info` fits the system's rules
+ *  better. done = success (green). */
+const PALETTE_VAR_NAMES: Record<keyof BarChartPalette, string> = {
+  background: "--surface",
+  bar: "--accent",
+  compare: "--warning",
+  swap: "--danger",
+  overwrite: "--info",
+  done: "--success",
+};
+
+/**
+ * Resolves the current design-system tokens (from :root, respecting light/dark
+ * via `:root[data-theme="dark"]`) into a concrete BarChartPalette. Canvas
+ * `fillStyle` can't reference CSS custom properties directly the way DOM
+ * element styles can, so this reads each token's computed value once via
+ * getComputedStyle — call it at renderer construction time, not per-frame.
+ * Falls back to DEFAULT_PALETTE per-role for any token that resolves empty.
+ *
+ * Note: because this resolves once rather than staying live, a panel's canvas
+ * won't automatically repaint if the page's color theme changes mid-race.
+ * Out of scope here — no live theme-switching requirement for this task.
+ */
+export function resolveDesignSystemPalette(): BarChartPalette {
+  const styles = getComputedStyle(document.documentElement);
+  const resolved = {} as BarChartPalette;
+  for (const role of Object.keys(PALETTE_VAR_NAMES) as (keyof BarChartPalette)[]) {
+    const value = styles.getPropertyValue(PALETTE_VAR_NAMES[role]).trim();
+    resolved[role] = value || DEFAULT_PALETTE[role];
+  }
+  return resolved;
+}
 
 const BAR_GAP_RATIO = 0.15; // fraction of each bar's slot left as gap
 
@@ -42,7 +94,7 @@ export class BarChartRenderer {
   private cssWidth = 0;
   private cssHeight = 0;
 
-  constructor(canvas: HTMLCanvasElement, palette: BarChartPalette = DEFAULT_PALETTE) {
+  constructor(canvas: HTMLCanvasElement, palette: BarChartPalette = resolveDesignSystemPalette()) {
     this.canvas = canvas;
     this.palette = palette;
     const ctx = canvas.getContext("2d");
