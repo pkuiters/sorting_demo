@@ -1,0 +1,1 @@
+SSH push test - confirms git push over the 1Password SSH agent works end to end.
